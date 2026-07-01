@@ -88,19 +88,29 @@
   function initRevealAnimation() {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const targets = document.querySelectorAll([
+      ".hero-brand",
+      ".hero-concept",
+      ".hero-tag",
+      ".hero-lead",
+      ".hero-treatment-visual",
       ".intro-photo",
       ".section-pad:not(.intro-photo)",
       ".reviews-section",
       ".faq-section",
       ".top-cards .mini-card",
       ".hero-proof > p",
+      ".ba-section .eyebrow",
+      ".ba-title",
+      ".ba-section .lead",
       ".photo-card",
       ".trust-grid > div",
       ".assurance-grid > div",
       ".campaign-card",
+      ".ba-offer-card",
       ".price-card",
       ".cta-block",
       ".worry-list > p",
+      ".beauty-worry-card",
       ".logic-list > div",
       ".method-steps > div",
       ".feature-list article",
@@ -115,10 +125,17 @@
 
     if (!targets.length) return;
 
-    const revealTargets = Array.from(targets).filter((el) => !el.closest(".hero"));
+    const sectionCounts = new Map();
+    const revealTargets = Array.from(targets);
     if (!revealTargets.length) return;
 
-    revealTargets.forEach((el) => el.classList.add("reveal"));
+    revealTargets.forEach((el) => {
+      const group = el.closest("section") || el.parentElement || document.body;
+      const count = sectionCounts.get(group) || 0;
+      sectionCounts.set(group, count + 1);
+      el.style.transitionDelay = Math.min(count * 0.07, 0.35).toFixed(2) + "s";
+      el.classList.add("reveal");
+    });
 
     if (prefersReduced || !("IntersectionObserver" in window)) {
       revealTargets.forEach((el) => el.classList.add("is-revealed"));
